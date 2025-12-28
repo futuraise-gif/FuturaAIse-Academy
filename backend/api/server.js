@@ -114,6 +114,7 @@ if (!routesLoaded) {
       status: 'ok',
       message: 'API is running',
       note: 'Full routes not loaded - build may be required',
+      version: 'v2-with-routes-in-api-folder',
       timestamp: new Date().toISOString()
     });
   });
