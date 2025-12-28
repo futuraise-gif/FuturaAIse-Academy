@@ -62,13 +62,46 @@ app.get('/api/health', (req, res) => {
 
 // Try to load compiled routes from dist folder
 let routesLoaded = false;
-try {
-  const routes = require('../dist/routes/index.firebase').default;
-  app.use('/api/v1', routes);
-  routesLoaded = true;
-  console.log('✓ API routes loaded from compiled dist');
-} catch (error) {
-  console.error('Failed to load compiled routes:', error.message);
+const path = require('path');
+const fs = require('fs');
+
+// Debug: Log current directory and check if dist exists
+console.log('Current __dirname:', __dirname);
+console.log('Current working directory:', process.cwd());
+
+const distPath = path.join(__dirname, '..', 'dist');
+console.log('Checking for dist directory at:', distPath);
+console.log('Dist exists:', fs.existsSync(distPath));
+
+if (fs.existsSync(distPath)) {
+  const distContents = fs.readdirSync(distPath);
+  console.log('Dist contents:', distContents);
+
+  const routesPath = path.join(distPath, 'routes');
+  if (fs.existsSync(routesPath)) {
+    const routesContents = fs.readdirSync(routesPath);
+    console.log('Routes contents:', routesContents.slice(0, 10)); // First 10 files
+  }
+}
+
+// Try multiple possible paths for the routes
+const possiblePaths = [
+  path.join(__dirname, '..', 'dist', 'routes', 'index.firebase.js'),
+  path.join(__dirname, '..', 'dist', 'routes', 'index.firebase'),
+  '../dist/routes/index.firebase',
+];
+
+for (const routePath of possiblePaths) {
+  try {
+    console.log('Trying to load routes from:', routePath);
+    const routes = require(routePath).default || require(routePath);
+    app.use('/api/v1', routes);
+    routesLoaded = true;
+    console.log('✓ API routes loaded from:', routePath);
+    break;
+  } catch (error) {
+    console.error(`Failed to load from ${routePath}:`, error.message);
+  }
 }
 
 // Fallback API endpoint if routes didn't load
