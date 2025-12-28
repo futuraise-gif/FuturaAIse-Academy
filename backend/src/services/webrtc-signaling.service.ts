@@ -31,9 +31,15 @@ export class WebRTCSignalingService {
   private rooms: Map<string, Room> = new Map();
 
   constructor(server: HTTPServer) {
+    const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || [
+      'http://localhost:3000',
+      'http://localhost:3001',
+      'http://localhost:3002',
+    ];
+
     this.io = new SocketIOServer(server, {
       cors: {
-        origin: ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:3002'],
+        origin: allowedOrigins,
         credentials: true,
       },
       path: '/socket.io',
