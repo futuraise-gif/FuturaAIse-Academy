@@ -1,5 +1,5 @@
 node_modules/
-dist/
+# dist/ - Temporarily committing dist for Vercel deployment
 .env
 *.log
 .DS_Store
