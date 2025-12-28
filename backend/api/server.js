@@ -86,6 +86,9 @@ if (fs.existsSync(distPath)) {
 
 // Try multiple possible paths for the routes
 const possiblePaths = [
+  path.join(__dirname, 'routes', 'index.firebase.js'), // Routes in api folder itself
+  path.join(__dirname, 'routes', 'index.firebase'),
+  './routes/index.firebase',
   path.join(__dirname, '..', 'dist', 'routes', 'index.firebase.js'),
   path.join(__dirname, '..', 'dist', 'routes', 'index.firebase'),
   '../dist/routes/index.firebase',
