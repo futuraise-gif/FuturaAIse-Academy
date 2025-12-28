@@ -104,7 +104,8 @@ export default function WebRTCRoom({ roomId, onLeave }: WebRTCRoomProps) {
   };
 
   const initializeSocket = () => {
-    const newSocket = io('http://localhost:5001', {
+    const socketUrl = import.meta.env.VITE_SOCKET_URL || 'http://localhost:5001';
+    const newSocket = io(socketUrl, {
       path: '/socket.io',
       transports: ['websocket', 'polling'],
     });
