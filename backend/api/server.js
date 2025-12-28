@@ -104,7 +104,12 @@ for (const routePath of possiblePaths) {
     break;
   } catch (error) {
     console.error(`Failed to load from ${routePath}:`, error.message);
+    console.error('Full error:', error.stack);
   }
+}
+
+if (!routesLoaded) {
+  console.error('⚠️ WARNING: No routes were loaded! All paths failed.');
 }
 
 // Fallback API endpoint if routes didn't load
@@ -114,7 +119,7 @@ if (!routesLoaded) {
       status: 'ok',
       message: 'API is running',
       note: 'Full routes not loaded - build may be required',
-      version: 'v2-with-routes-in-api-folder',
+      version: 'v3-with-types-and-better-logging',
       timestamp: new Date().toISOString()
     });
   });
