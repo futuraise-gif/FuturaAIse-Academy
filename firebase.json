@@ -2,5 +2,12 @@
   "firestore": {
     "rules": "backend/firestore.rules",
     "indexes": "backend/firestore.indexes.json"
+  },
+  "functions": {
+    "source": "backend",
+    "predeploy": [
+      "npm --prefix backend run build"
+    ],
+    "runtime": "nodejs18"
   }
 }
