@@ -1,18 +1,32 @@
+// Register ts-node to handle TypeScript files
+require('ts-node').register({
+  transpileOnly: true,
+  compilerOptions: {
+    module: 'commonjs',
+  },
+});
+
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
 const admin = require('firebase-admin');
+const path = require('path');
 
 // Initialize Firebase Admin
 if (!admin.apps.length) {
-  admin.initializeApp({
-    credential: admin.credential.cert({
-      projectId: process.env.FIREBASE_PROJECT_ID,
-      clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-      privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
-    }),
-  });
+  try {
+    admin.initializeApp({
+      credential: admin.credential.cert({
+        projectId: process.env.FIREBASE_PROJECT_ID,
+        clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+        privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+      }),
+    });
+    console.log('✓ Firebase Admin initialized');
+  } catch (error) {
+    console.error('Failed to initialize Firebase Admin:', error);
+  }
 }
 
 const app = express();
@@ -28,13 +42,14 @@ app.use(helmet({
 
 app.use(cors({
   origin: (origin, callback) => {
+    console.log('CORS check - Origin:', origin);
     if (!origin) return callback(null, true);
 
-    // Allow Vercel preview deployments
+    // Allow Vercel preview deployments and configured origins
     if (origin.includes('.vercel.app') || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
-      callback(null, true); // Allow all for now
+      callback(null, true); // Allow all for now during setup
     }
   },
   credentials: true,
@@ -54,14 +69,24 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// Simple test endpoint
-app.get('/api/v1/health', (req, res) => {
-  res.json({
-    status: 'ok',
-    message: 'API is working',
-    timestamp: new Date().toISOString()
+// Load TypeScript routes
+try {
+  const routes = require('../src/routes/index.firebase').default;
+  app.use('/api/v1', routes);
+  console.log('✓ API routes loaded');
+} catch (error) {
+  console.error('Failed to load routes:', error);
+  
+  // Fallback simple API endpoint
+  app.get('/api/v1/health', (req, res) => {
+    res.json({
+      status: 'ok',
+      message: 'API is running (routes failed to load)',
+      error: error.message,
+      timestamp: new Date().toISOString()
+    });
   });
-});
+}
 
 // 404 handler
 app.use((req, res) => {
