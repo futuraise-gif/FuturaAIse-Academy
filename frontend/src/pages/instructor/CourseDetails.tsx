@@ -34,6 +34,9 @@ export default function CourseDetails() {
   const [materialUrl, setMaterialUrl] = useState('');
   const [materialType, setMaterialType] = useState('pdf');
   const [materials, setMaterials] = useState<Material[]>([]);
+  const [uploadMethod, setUploadMethod] = useState<'file' | 'url'>('file');
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
     if (courseId) {
@@ -88,6 +91,60 @@ export default function CourseDetails() {
     setMaterialUrl('');
     setMaterialType('pdf');
     setShowModuleModal(true);
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setSelectedFile(e.target.files[0]);
+      // Auto-detect material type from file
+      const file = e.target.files[0];
+      if (file.type.includes('pdf')) setMaterialType('pdf');
+      else if (file.type.includes('presentation') || file.name.endsWith('.ppt') || file.name.endsWith('.pptx')) setMaterialType('ppt');
+      else if (file.type.includes('video')) setMaterialType('video');
+      else setMaterialType('document');
+    }
+  };
+
+  const handleUploadFile = async () => {
+    if (!selectedFile || !materialTitle) {
+      alert('Please provide a title and select a file');
+      return;
+    }
+
+    setUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append('file', selectedFile);
+
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/v1/instructor/upload`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+        body: formData,
+      });
+
+      if (!response.ok) throw new Error('Upload failed');
+
+      const data = await response.json();
+
+      setMaterials([...materials, {
+        title: materialTitle,
+        url: data.url,
+        type: materialType
+      }]);
+
+      setMaterialTitle('');
+      setSelectedFile(null);
+      setMaterialType('pdf');
+      alert('File uploaded successfully!');
+    } catch (error) {
+      console.error('Upload error:', error);
+      alert('Failed to upload file');
+    } finally {
+      setUploading(false);
+    }
   };
 
   const handleAddMaterial = () => {
@@ -501,6 +558,32 @@ export default function CourseDetails() {
                   <div className="border-t pt-4">
                     <h3 className="text-sm font-semibold text-gray-900 mb-3">Learning Materials (Optional)</h3>
 
+                    {/* Upload Method Toggle */}
+                    <div className="flex gap-2 mb-4">
+                      <button
+                        type="button"
+                        onClick={() => setUploadMethod('file')}
+                        className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-colors ${
+                          uploadMethod === 'file'
+                            ? 'bg-blue-600 text-white'
+                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        }`}
+                      >
+                        📤 Upload File
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setUploadMethod('url')}
+                        className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-colors ${
+                          uploadMethod === 'url'
+                            ? 'bg-blue-600 text-white'
+                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        }`}
+                      >
+                        🔗 Add URL
+                      </button>
+                    </div>
+
                     <div className="space-y-3 mb-3">
                       <div>
                         <input
@@ -511,35 +594,88 @@ export default function CourseDetails() {
                           className="w-full px-3 py-2 border rounded-lg text-sm"
                         />
                       </div>
-                      <div>
-                        <input
-                          type="url"
-                          value={materialUrl}
-                          onChange={(e) => setMaterialUrl(e.target.value)}
-                          placeholder="Material URL (Google Drive, Dropbox, etc.)"
-                          className="w-full px-3 py-2 border rounded-lg text-sm"
-                        />
-                      </div>
-                      <div className="flex gap-2">
-                        <select
-                          value={materialType}
-                          onChange={(e) => setMaterialType(e.target.value)}
-                          className="flex-1 px-3 py-2 border rounded-lg text-sm"
-                        >
-                          <option value="pdf">PDF</option>
-                          <option value="ppt">PowerPoint</option>
-                          <option value="video">Video</option>
-                          <option value="document">Document</option>
-                          <option value="link">Link</option>
-                        </select>
-                        <button
-                          type="button"
-                          onClick={handleAddMaterial}
-                          className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700"
-                        >
-                          Add
-                        </button>
-                      </div>
+
+                      {uploadMethod === 'file' ? (
+                        <>
+                          <div>
+                            <label className="block w-full">
+                              <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-blue-500 cursor-pointer transition-colors">
+                                {selectedFile ? (
+                                  <div className="space-y-1">
+                                    <p className="text-sm font-medium text-gray-900">{selectedFile.name}</p>
+                                    <p className="text-xs text-gray-500">
+                                      {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
+                                    </p>
+                                  </div>
+                                ) : (
+                                  <div className="space-y-1">
+                                    <p className="text-sm text-gray-600">Click to select file or drag and drop</p>
+                                    <p className="text-xs text-gray-500">PDF, PPT, Videos, Documents (max 100MB)</p>
+                                  </div>
+                                )}
+                              </div>
+                              <input
+                                type="file"
+                                onChange={handleFileChange}
+                                className="hidden"
+                                accept=".pdf,.ppt,.pptx,.mp4,.webm,.doc,.docx,.jpg,.jpeg,.png,.gif"
+                              />
+                            </label>
+                          </div>
+                          <div className="flex gap-2">
+                            <select
+                              value={materialType}
+                              onChange={(e) => setMaterialType(e.target.value)}
+                              className="flex-1 px-3 py-2 border rounded-lg text-sm"
+                            >
+                              <option value="pdf">PDF</option>
+                              <option value="ppt">PowerPoint</option>
+                              <option value="video">Video</option>
+                              <option value="document">Document</option>
+                            </select>
+                            <button
+                              type="button"
+                              onClick={handleUploadFile}
+                              disabled={uploading || !selectedFile || !materialTitle}
+                              className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
+                            >
+                              {uploading ? '⏳ Uploading...' : '📤 Upload'}
+                            </button>
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div>
+                            <input
+                              type="url"
+                              value={materialUrl}
+                              onChange={(e) => setMaterialUrl(e.target.value)}
+                              placeholder="Material URL (Google Drive, Dropbox, etc.)"
+                              className="w-full px-3 py-2 border rounded-lg text-sm"
+                            />
+                          </div>
+                          <div className="flex gap-2">
+                            <select
+                              value={materialType}
+                              onChange={(e) => setMaterialType(e.target.value)}
+                              className="flex-1 px-3 py-2 border rounded-lg text-sm"
+                            >
+                              <option value="pdf">PDF</option>
+                              <option value="ppt">PowerPoint</option>
+                              <option value="video">Video</option>
+                              <option value="document">Document</option>
+                              <option value="link">Link</option>
+                            </select>
+                            <button
+                              type="button"
+                              onClick={handleAddMaterial}
+                              className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700"
+                            >
+                              Add
+                            </button>
+                          </div>
+                        </>
+                      )}
                     </div>
 
                     {materials.length > 0 && (

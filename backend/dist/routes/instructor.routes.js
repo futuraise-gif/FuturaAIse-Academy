@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const auth_firebase_1 = require("../middleware/auth.firebase");
+const upload_1 = require("../middleware/upload");
 const program_controller_1 = require("../controllers/program.controller");
 const instructor_course_controller_1 = require("../controllers/instructor.course.controller");
 const instructor_module_controller_1 = require("../controllers/instructor.module.controller");
@@ -9,6 +10,7 @@ const instructor_attendance_controller_1 = require("../controllers/instructor.at
 const instructor_assignment_controller_1 = require("../controllers/instructor.assignment.controller");
 const instructor_announcement_controller_1 = require("../controllers/instructor.announcement.controller");
 const instructor_analytics_controller_1 = require("../controllers/instructor.analytics.controller");
+const file_upload_controller_1 = require("../controllers/file-upload.controller");
 const router = (0, express_1.Router)();
 // All routes require authentication
 router.use(auth_firebase_1.authenticate);
@@ -86,5 +88,10 @@ router.get('/analytics/student/:studentId/course/:courseId', instructor_analytic
 router.get('/analytics/course/:courseId/students', instructor_analytics_controller_1.InstructorAnalyticsController.getCourseStudentsProgress);
 router.get('/analytics/course/:courseId', instructor_analytics_controller_1.InstructorAnalyticsController.getCourseAnalytics);
 router.get('/analytics/student/:studentId/performance/:courseId', instructor_analytics_controller_1.InstructorAnalyticsController.getStudentPerformanceMetrics);
+/**
+ * FILE UPLOAD ROUTES
+ */
+router.post('/upload', upload_1.upload.single('file'), file_upload_controller_1.FileUploadController.uploadFile);
+router.delete('/upload', file_upload_controller_1.FileUploadController.deleteFile);
 exports.default = router;
 //# sourceMappingURL=instructor.routes.js.map

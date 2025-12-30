@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { authenticate } from '../middleware/auth.firebase';
+import { upload } from '../middleware/upload';
 import { ProgramController } from '../controllers/program.controller';
 import { InstructorCourseController } from '../controllers/instructor.course.controller';
 import { InstructorModuleController } from '../controllers/instructor.module.controller';
@@ -7,6 +8,7 @@ import { InstructorAttendanceController } from '../controllers/instructor.attend
 import { InstructorAssignmentController } from '../controllers/instructor.assignment.controller';
 import { InstructorAnnouncementController } from '../controllers/instructor.announcement.controller';
 import { InstructorAnalyticsController } from '../controllers/instructor.analytics.controller';
+import { FileUploadController } from '../controllers/file-upload.controller';
 
 const router = Router();
 
@@ -93,5 +95,11 @@ router.get('/analytics/student/:studentId/course/:courseId', InstructorAnalytics
 router.get('/analytics/course/:courseId/students', InstructorAnalyticsController.getCourseStudentsProgress);
 router.get('/analytics/course/:courseId', InstructorAnalyticsController.getCourseAnalytics);
 router.get('/analytics/student/:studentId/performance/:courseId', InstructorAnalyticsController.getStudentPerformanceMetrics);
+
+/**
+ * FILE UPLOAD ROUTES
+ */
+router.post('/upload', upload.single('file'), FileUploadController.uploadFile);
+router.delete('/upload', FileUploadController.deleteFile);
 
 export default router;
