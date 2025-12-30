@@ -2,7 +2,11 @@ import { Response } from 'express';
 import { AuthRequest } from '../middleware/auth.firebase';
 import * as admin from 'firebase-admin';
 
-const bucket = admin.storage().bucket();
+// Get bucket instance (will be initialized when needed)
+const getBucket = () => {
+  const storageBucket = process.env.FIREBASE_STORAGE_BUCKET || 'fir-academy-8f2c4.firebasestorage.app';
+  return admin.storage().bucket(storageBucket);
+};
 
 export class FileUploadController {
   /**
@@ -19,6 +23,7 @@ export class FileUploadController {
       }
 
       // Create a unique filename
+      const bucket = getBucket();
       const timestamp = Date.now();
       const fileName = `materials/${user.userId}/${timestamp}-${file.originalname}`;
 
@@ -65,6 +70,8 @@ export class FileUploadController {
         res.status(400).json({ error: 'File URL is required' });
         return;
       }
+
+      const bucket = getBucket();
 
       // Extract filename from URL
       const fileName = fileUrl.split(`${bucket.name}/`)[1];

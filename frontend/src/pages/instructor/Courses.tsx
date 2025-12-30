@@ -43,16 +43,18 @@ export default function Courses() {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const [coursesData, programsData] = await Promise.all([
-        courseService.getInstructorCourses(),
-        programService.getPublishedPrograms(),
-      ]);
-      setCourses(coursesData);
-      setPrograms(programsData);
       setError('');
-    } catch (error) {
+
+      const coursesData = await courseService.getInstructorCourses();
+      setCourses(coursesData);
+
+      const programsData = await programService.getInstructorPrograms();
+      setPrograms(programsData);
+
+    } catch (error: any) {
       console.error('Failed to fetch data:', error);
-      setError('Failed to load courses. Please try again.');
+      const errorMessage = error.response?.data?.error || error.message || 'Failed to load courses. Please try again.';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }

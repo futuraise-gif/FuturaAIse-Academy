@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import DashboardLayout from '@/components/DashboardLayout';
-import { programService } from '@/services/instructorService';
-import { Program, ProgramStatus } from '@/types/instructor.types';
+import { programService, courseService } from '@/services/instructorService';
+import { Program, ProgramStatus, Course } from '@/types/instructor.types';
 
 export default function ProgramDetails() {
   const { programId } = useParams<{ programId: string }>();
   const navigate = useNavigate();
   const [program, setProgram] = useState<Program | null>(null);
+  const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -20,6 +21,11 @@ export default function ProgramDetails() {
     try {
       const data = await programService.getProgramDetails(programId!);
       setProgram(data);
+
+      // Fetch courses for this program
+      const allCourses = await courseService.getInstructorCourses();
+      const programCourses = allCourses.filter(course => course.program_id === programId);
+      setCourses(programCourses);
     } catch (error) {
       console.error('Failed to fetch program details:', error);
       alert('Failed to load program details');
@@ -183,37 +189,67 @@ export default function ProgramDetails() {
         <div className="bg-white rounded-lg shadow p-6">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-semibold text-gray-900">
-              Courses ({program.course_count || 0})
+              Courses ({courses.length})
             </h2>
             <button
-              onClick={() => navigate(`/instructor/courses?program_id=${program.id}`)}
+              onClick={() => navigate('/instructor/courses')}
               className="bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700"
             >
               + Add Course
             </button>
           </div>
 
-          {!program.course_count || program.course_count === 0 ? (
+          {courses.length === 0 ? (
             <div className="text-center py-12 bg-gray-50 rounded-lg">
               <div className="text-6xl mb-4">📖</div>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">No courses yet</h3>
               <p className="text-gray-600 mb-4">Add courses to this program to get started</p>
               <button
-                onClick={() => navigate(`/instructor/courses?program_id=${program.id}`)}
+                onClick={() => navigate('/instructor/courses')}
                 className="bg-blue-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-blue-700"
               >
                 Add First Course
               </button>
             </div>
           ) : (
-            <div className="text-gray-600">
-              <p>This program has {program.course_count} course(s).</p>
-              <button
-                onClick={() => navigate(`/instructor/courses?program_id=${program.id}`)}
-                className="mt-4 text-blue-600 hover:underline"
-              >
-                View all courses →
-              </button>
+            <div className="space-y-3">
+              {courses.map((course) => (
+                <div
+                  key={course.id}
+                  className="border rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer"
+                  onClick={() => navigate(`/instructor/courses/${course.id}`)}
+                >
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3 mb-2">
+                        <h3 className="text-lg font-semibold text-gray-900">{course.title}</h3>
+                        <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                          course.status === 'published'
+                            ? 'bg-green-100 text-green-800'
+                            : 'bg-gray-100 text-gray-800'
+                        }`}>
+                          {course.status}
+                        </span>
+                      </div>
+                      <p className="text-sm text-gray-600 mb-3">{course.description}</p>
+                      <div className="flex items-center gap-4 text-sm text-gray-500">
+                        <span>📚 {course.module_count || 0} modules</span>
+                        <span>👥 {course.student_count || 0} students</span>
+                        {course.duration_weeks && <span>⏱️ {course.duration_weeks} weeks</span>}
+                      </div>
+                    </div>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`/instructor/courses/${course.id}`);
+                      }}
+                      className="text-blue-600 hover:bg-blue-50 px-3 py-1 rounded text-sm font-medium"
+                    >
+                      View Details →
+                    </button>
+                  </div>
+                </div>
+              ))}
             </div>
           )}
         </div>
@@ -224,7 +260,7 @@ export default function ProgramDetails() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-500">Total Courses</p>
-                <p className="text-2xl font-bold text-gray-900 mt-1">{program.course_count || 0}</p>
+                <p className="text-2xl font-bold text-gray-900 mt-1">{courses.length}</p>
               </div>
               <div className="text-4xl">📚</div>
             </div>

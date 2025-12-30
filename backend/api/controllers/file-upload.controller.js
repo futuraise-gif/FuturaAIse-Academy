@@ -35,7 +35,11 @@ var __importStar = (this && this.__importStar) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FileUploadController = void 0;
 const admin = __importStar(require("firebase-admin"));
-const bucket = admin.storage().bucket();
+// Get bucket instance (will be initialized when needed)
+const getBucket = () => {
+    const storageBucket = process.env.FIREBASE_STORAGE_BUCKET || 'fir-academy-8f2c4.firebasestorage.app';
+    return admin.storage().bucket(storageBucket);
+};
 class FileUploadController {
     /**
      * Upload a file to Firebase Storage
@@ -49,6 +53,7 @@ class FileUploadController {
                 return;
             }
             // Create a unique filename
+            const bucket = getBucket();
             const timestamp = Date.now();
             const fileName = `materials/${user.userId}/${timestamp}-${file.originalname}`;
             // Create a file reference in Firebase Storage
@@ -89,6 +94,7 @@ class FileUploadController {
                 res.status(400).json({ error: 'File URL is required' });
                 return;
             }
+            const bucket = getBucket();
             // Extract filename from URL
             const fileName = fileUrl.split(`${bucket.name}/`)[1];
             if (!fileName) {
