@@ -70,4 +70,18 @@ router.get('/users/export-csv', SuperAdminController.exportUsersCSV);
  */
 router.post('/users/bulk-import', SuperAdminController.bulkImportUsers);
 
+/**
+ * @route   GET /api/superadmin/courses
+ * @desc    Get all courses with instructor info
+ * @access  Super Admin only
+ */
+router.get('/courses', SuperAdminController.getAllCourses);
+
+/**
+ * @route   GET /api/superadmin/programs
+ * @desc    Get all programs with instructor info
+ * @access  Super Admin only
+ */
+router.get('/programs', SuperAdminController.getAllPrograms);
+
 export default router;

@@ -45,5 +45,13 @@ export declare class SuperAdminController {
      * Bulk import users from CSV - Super Admin only
      */
     static bulkImportUsers(req: AuthRequest, res: Response): Promise<void>;
+    /**
+     * Get all courses with instructor info - Super Admin only
+     */
+    static getAllCourses(req: AuthRequest, res: Response): Promise<void>;
+    /**
+     * Get all programs with instructor info - Super Admin only
+     */
+    static getAllPrograms(req: AuthRequest, res: Response): Promise<void>;
 }
 //# sourceMappingURL=superadmin.controller.d.ts.map

@@ -33,6 +33,7 @@ import StudentLiveClasses from './pages/student/LiveClasses';
 import StudentBetaTesting from './pages/student/BetaTesting';
 import StudentGrades from './pages/StudentGrades';
 import SuperAdminDashboard from './pages/superadmin/SuperAdminDashboard';
+import SuperAdminCourses from './pages/superadmin/SuperAdminCourses';
 import StudentRegistration from './pages/admin/StudentRegistration';
 import StudentManagement from './pages/admin/StudentManagement';
 import InstructorManagement from './pages/admin/InstructorManagement';
@@ -418,6 +419,14 @@ function App() {
           element={
             <ProtectedRoute allowedRoles={[UserRole.SUPER_ADMIN]}>
               <SuperAdminDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/superadmin/courses"
+          element={
+            <ProtectedRoute allowedRoles={[UserRole.SUPER_ADMIN]}>
+              <SuperAdminCourses />
             </ProtectedRoute>
           }
         />
