@@ -18,6 +18,7 @@ import adminInfoRoutes from './admin.info.routes';
 import liveClassRoutes from './live-class.routes';
 import calendarRoutes from './calendar.routes';
 import webrtcClassRoutes from './webrtc-class.routes';
+import { InstructorModuleController } from '../controllers/instructor.module.controller';
 
 const router = Router();
 
@@ -40,6 +41,9 @@ router.use('/live-sessions', liveSessionRoutes);
 router.use('/live-classes', liveClassRoutes);
 router.use('/calendar', calendarRoutes);
 router.use('/webrtc-classes', webrtcClassRoutes);
+
+// Public module route for students
+router.get('/modules/:moduleId', InstructorModuleController.getModuleById);
 
 router.get('/health', (req, res) => {
   res.json({

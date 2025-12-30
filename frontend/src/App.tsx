@@ -22,6 +22,8 @@ import InstructorHome from './pages/instructor/InstructorHome';
 import Programs from './pages/instructor/Programs';
 import ProgramDetails from './pages/instructor/ProgramDetails';
 import InstructorCourses from './pages/instructor/Courses';
+import CourseDetails from './pages/instructor/CourseDetails';
+import ModuleDetails from './pages/instructor/ModuleDetails';
 import Attendance from './pages/instructor/Attendance';
 import InstructorAssignments from './pages/instructor/Assignments';
 import AssignmentSubmissions from './pages/instructor/AssignmentSubmissions';
@@ -32,6 +34,7 @@ import InstructorLiveClasses from './pages/instructor/LiveClasses';
 import InstructorBetaTesting from './pages/instructor/BetaTesting';
 import StudentLiveClasses from './pages/student/LiveClasses';
 import StudentBetaTesting from './pages/student/BetaTesting';
+import StudentModuleView from './pages/student/ModuleView';
 import StudentGrades from './pages/StudentGrades';
 import SuperAdminDashboard from './pages/superadmin/SuperAdminDashboard';
 import SuperAdminCourses from './pages/superadmin/SuperAdminCourses';
@@ -174,6 +177,14 @@ function App() {
           }
         />
         <Route
+          path="/courses/:courseId/modules/:moduleId"
+          element={
+            <ProtectedRoute allowedRoles={[UserRole.STUDENT, UserRole.INSTRUCTOR]}>
+              <StudentModuleView />
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/courses/:courseId/content"
           element={
             <ProtectedRoute>
@@ -252,6 +263,22 @@ function App() {
           element={
             <ProtectedRoute allowedRoles={[UserRole.INSTRUCTOR, UserRole.ADMIN]}>
               <InstructorCourses />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/instructor/courses/:courseId"
+          element={
+            <ProtectedRoute allowedRoles={[UserRole.INSTRUCTOR, UserRole.ADMIN]}>
+              <CourseDetails />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/instructor/courses/:courseId/modules/:moduleId"
+          element={
+            <ProtectedRoute allowedRoles={[UserRole.INSTRUCTOR, UserRole.ADMIN]}>
+              <ModuleDetails />
             </ProtectedRoute>
           }
         />

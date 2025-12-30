@@ -213,6 +213,11 @@ export const moduleService = {
     return response.data.modules;
   },
 
+  getModuleDetails: async (moduleId: string): Promise<Module> => {
+    const response = await api.get(`/instructor/modules/${moduleId}`);
+    return response.data.module;
+  },
+
   updateModule: async (moduleId: string, data: any): Promise<Module> => {
     const response = await api.put(`/instructor/modules/${moduleId}`, data);
     return response.data.module;

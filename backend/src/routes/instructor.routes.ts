@@ -40,6 +40,7 @@ router.get('/courses/:courseId/students', InstructorCourseController.getEnrolled
  */
 router.post('/modules', InstructorModuleController.createModule);
 router.get('/courses/:courseId/modules', InstructorModuleController.getCourseModules);
+router.get('/modules/:moduleId', InstructorModuleController.getModuleById);
 router.put('/modules/:moduleId', InstructorModuleController.updateModule);
 router.delete('/modules/:moduleId', InstructorModuleController.deleteModule);
 router.post('/modules/:moduleId/materials', InstructorModuleController.addMaterial);
