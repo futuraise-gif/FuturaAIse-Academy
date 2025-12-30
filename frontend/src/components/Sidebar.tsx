@@ -58,7 +58,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   const isActive = (path: string) => location.pathname === path;
 
   const navItems = [
-    { path: '/dashboard', label: 'Dashboard', icon: '🏠', roles: [UserRole.STUDENT, UserRole.INSTRUCTOR, UserRole.ADMIN] },
+    { path: '/dashboard', label: 'Dashboard', icon: '🏠', roles: [UserRole.STUDENT, UserRole.ADMIN] },
     { path: '/superadmin/dashboard', label: 'Super Admin Panel', icon: '🔐', roles: [UserRole.SUPER_ADMIN] },
     { path: '/superadmin/courses', label: 'All Courses', icon: '📚', roles: [UserRole.SUPER_ADMIN] },
     { path: '/instructor', label: 'Instructor Panel', icon: '👨‍🏫', roles: [UserRole.INSTRUCTOR] },

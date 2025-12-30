@@ -20,6 +20,7 @@ import InstructorDashboard from './pages/instructor/InstructorDashboard';
 import GradeCenter from './pages/instructor/GradeCenter';
 import InstructorHome from './pages/instructor/InstructorHome';
 import Programs from './pages/instructor/Programs';
+import ProgramDetails from './pages/instructor/ProgramDetails';
 import InstructorCourses from './pages/instructor/Courses';
 import Attendance from './pages/instructor/Attendance';
 import InstructorAssignments from './pages/instructor/Assignments';
@@ -235,6 +236,14 @@ function App() {
           element={
             <ProtectedRoute allowedRoles={[UserRole.INSTRUCTOR, UserRole.ADMIN]}>
               <Programs />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/instructor/programs/:programId"
+          element={
+            <ProtectedRoute allowedRoles={[UserRole.INSTRUCTOR, UserRole.ADMIN]}>
+              <ProgramDetails />
             </ProtectedRoute>
           }
         />

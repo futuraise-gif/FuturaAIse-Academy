@@ -150,6 +150,16 @@ export const programService = {
     const response = await api.post(`/instructor/programs/${programId}/publish`);
     return response.data.program;
   },
+
+  archiveProgram: async (programId: string): Promise<Program> => {
+    const response = await api.post(`/instructor/programs/${programId}/archive`);
+    return response.data.program;
+  },
+
+  getProgramDetails: async (programId: string): Promise<Program> => {
+    const response = await api.get(`/instructor/programs/${programId}`);
+    return response.data.program;
+  },
 };
 
 // Course APIs
