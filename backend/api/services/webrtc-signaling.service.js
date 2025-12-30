@@ -5,9 +5,14 @@ const socket_io_1 = require("socket.io");
 class WebRTCSignalingService {
     constructor(server) {
         this.rooms = new Map();
+        const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || [
+            'http://localhost:3000',
+            'http://localhost:3001',
+            'http://localhost:3002',
+        ];
         this.io = new socket_io_1.Server(server, {
             cors: {
-                origin: ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:3002'],
+                origin: allowedOrigins,
                 credentials: true,
             },
             path: '/socket.io',

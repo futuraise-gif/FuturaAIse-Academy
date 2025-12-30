@@ -121,6 +121,28 @@ class InstructorModuleController {
         }
     }
     /**
+     * Get module by ID
+     */
+    static async getModuleById(req, res) {
+        try {
+            const { moduleId } = req.params;
+            const moduleDoc = await db.collection('modules').doc(moduleId).get();
+            if (!moduleDoc.exists) {
+                res.status(404).json({ error: 'Module not found' });
+                return;
+            }
+            const module = {
+                id: moduleDoc.id,
+                ...moduleDoc.data(),
+            };
+            res.json({ module });
+        }
+        catch (error) {
+            console.error('Get module error:', error);
+            res.status(500).json({ error: 'Failed to fetch module' });
+        }
+    }
+    /**
      * Update module
      */
     static async updateModule(req, res) {

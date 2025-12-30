@@ -23,6 +23,7 @@ const admin_info_routes_1 = __importDefault(require("./admin.info.routes"));
 const live_class_routes_1 = __importDefault(require("./live-class.routes"));
 const calendar_routes_1 = __importDefault(require("./calendar.routes"));
 const webrtc_class_routes_1 = __importDefault(require("./webrtc-class.routes"));
+const instructor_module_controller_1 = require("../controllers/instructor.module.controller");
 const router = (0, express_1.Router)();
 router.use('/auth', auth_firebase_1.default);
 router.use('/users', user_firebase_1.default);
@@ -43,6 +44,8 @@ router.use('/live-sessions', live_session_routes_1.default);
 router.use('/live-classes', live_class_routes_1.default);
 router.use('/calendar', calendar_routes_1.default);
 router.use('/webrtc-classes', webrtc_class_routes_1.default);
+// Public module route for students
+router.get('/modules/:moduleId', instructor_module_controller_1.InstructorModuleController.getModuleById);
 router.get('/health', (req, res) => {
     res.json({
         status: 'ok',

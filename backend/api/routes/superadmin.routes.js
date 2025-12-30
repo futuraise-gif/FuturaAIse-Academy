@@ -60,5 +60,17 @@ router.get('/users/export-csv', superadmin_controller_1.SuperAdminController.exp
  * @access  Super Admin only
  */
 router.post('/users/bulk-import', superadmin_controller_1.SuperAdminController.bulkImportUsers);
+/**
+ * @route   GET /api/superadmin/courses
+ * @desc    Get all courses with instructor info
+ * @access  Super Admin only
+ */
+router.get('/courses', superadmin_controller_1.SuperAdminController.getAllCourses);
+/**
+ * @route   GET /api/superadmin/programs
+ * @desc    Get all programs with instructor info
+ * @access  Super Admin only
+ */
+router.get('/programs', superadmin_controller_1.SuperAdminController.getAllPrograms);
 exports.default = router;
 //# sourceMappingURL=superadmin.routes.js.map

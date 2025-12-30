@@ -37,6 +37,7 @@ router.get('/courses/:courseId/students', instructor_course_controller_1.Instruc
  */
 router.post('/modules', instructor_module_controller_1.InstructorModuleController.createModule);
 router.get('/courses/:courseId/modules', instructor_module_controller_1.InstructorModuleController.getCourseModules);
+router.get('/modules/:moduleId', instructor_module_controller_1.InstructorModuleController.getModuleById);
 router.put('/modules/:moduleId', instructor_module_controller_1.InstructorModuleController.updateModule);
 router.delete('/modules/:moduleId', instructor_module_controller_1.InstructorModuleController.deleteModule);
 router.post('/modules/:moduleId/materials', instructor_module_controller_1.InstructorModuleController.addMaterial);

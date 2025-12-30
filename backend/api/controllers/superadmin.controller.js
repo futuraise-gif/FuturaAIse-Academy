@@ -630,6 +630,52 @@ class SuperAdminController {
             res.status(500).json({ error: 'Failed to import users' });
         }
     }
+    /**
+     * Get all courses with instructor info - Super Admin only
+     */
+    static async getAllCourses(req, res) {
+        try {
+            const user = req.user;
+            if (user.role !== types_1.UserRole.SUPER_ADMIN) {
+                res.status(403).json({ error: 'Only Super Admin can view all courses' });
+                return;
+            }
+            const db = admin.firestore();
+            const coursesSnapshot = await db.collection('courses').get();
+            const courses = coursesSnapshot.docs.map((doc) => ({
+                id: doc.id,
+                ...doc.data(),
+            }));
+            res.json({ courses });
+        }
+        catch (error) {
+            console.error('Get all courses error:', error);
+            res.status(500).json({ error: 'Failed to fetch courses' });
+        }
+    }
+    /**
+     * Get all programs with instructor info - Super Admin only
+     */
+    static async getAllPrograms(req, res) {
+        try {
+            const user = req.user;
+            if (user.role !== types_1.UserRole.SUPER_ADMIN) {
+                res.status(403).json({ error: 'Only Super Admin can view all programs' });
+                return;
+            }
+            const db = admin.firestore();
+            const programsSnapshot = await db.collection('programs').get();
+            const programs = programsSnapshot.docs.map((doc) => ({
+                id: doc.id,
+                ...doc.data(),
+            }));
+            res.json({ programs });
+        }
+        catch (error) {
+            console.error('Get all programs error:', error);
+            res.status(500).json({ error: 'Failed to fetch programs' });
+        }
+    }
 }
 exports.SuperAdminController = SuperAdminController;
 //# sourceMappingURL=superadmin.controller.js.map

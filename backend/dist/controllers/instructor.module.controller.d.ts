@@ -10,6 +10,10 @@ export declare class InstructorModuleController {
      */
     static getCourseModules(req: AuthRequest, res: Response): Promise<void>;
     /**
+     * Get module by ID
+     */
+    static getModuleById(req: AuthRequest, res: Response): Promise<void>;
+    /**
      * Update module
      */
     static updateModule(req: AuthRequest, res: Response): Promise<void>;
