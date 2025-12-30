@@ -58,12 +58,12 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   const isActive = (path: string) => location.pathname === path;
 
   const navItems = [
-    { path: '/dashboard', label: 'Dashboard', icon: '🏠', roles: [UserRole.STUDENT, UserRole.INSTRUCTOR, UserRole.ADMIN, UserRole.SUPER_ADMIN] },
+    { path: '/dashboard', label: 'Dashboard', icon: '🏠', roles: [UserRole.STUDENT, UserRole.INSTRUCTOR, UserRole.ADMIN] },
     { path: '/superadmin/dashboard', label: 'Super Admin Panel', icon: '🔐', roles: [UserRole.SUPER_ADMIN] },
     { path: '/superadmin/courses', label: 'All Courses', icon: '📚', roles: [UserRole.SUPER_ADMIN] },
     { path: '/instructor', label: 'Instructor Panel', icon: '👨‍🏫', roles: [UserRole.INSTRUCTOR] },
-    { path: '/admin/students', label: 'All Students', icon: '👥', roles: [UserRole.ADMIN, UserRole.SUPER_ADMIN] },
-    { path: '/admin/instructors', label: 'All Instructors', icon: '👨‍🏫', roles: [UserRole.ADMIN, UserRole.SUPER_ADMIN] },
+    { path: '/admin/students', label: 'All Students', icon: '👥', roles: [UserRole.ADMIN] },
+    { path: '/admin/instructors', label: 'All Instructors', icon: '👨‍🏫', roles: [UserRole.ADMIN] },
     { path: '/admin/student-registration', label: 'Student Registration', icon: '📋', roles: [UserRole.ADMIN] },
     { path: '/admin/crm', label: 'CRM Dashboard', icon: '📊', roles: [UserRole.ADMIN] },
     { path: '/admin/crm/leads', label: 'Lead Management', icon: '🎯', roles: [UserRole.ADMIN] },
